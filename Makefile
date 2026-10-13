@@ -3,7 +3,7 @@ DEV_COMPOSE := $(COMPOSE) -f docker-compose.yml -f docker-compose.dev.yml
 
 .PHONY: dev dev-build dev-down dev-logs dev-status \
 	restart-backend recreate-backend recreate-frontend \
-	deps-backend deps-frontend rebuild-backend rebuild-frontend rebuild-all
+	deps-backend deps-frontend rebuild-backend rebuild-frontend rebuild-all test-nginx-cache
 
 dev:
 	$(DEV_COMPOSE) up -d
@@ -49,3 +49,7 @@ rebuild-frontend:
 rebuild-all:
 	$(DEV_COMPOSE) build
 	$(DEV_COMPOSE) up -d
+
+# Requires Python 3 and Docker; runs nginx with disposable static fixtures.
+test-nginx-cache:
+	rtk proxy python3 -B -m unittest discover -s tests -p 'test_nginx_cache.py' -v
